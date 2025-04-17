@@ -74,7 +74,10 @@ def get_user(username: str):
     user_data = redis_client.hgetall(f"user:{username}")
     if not user_data:
         return None
-    return UserInDB(**{k.decode(): v.decode() for k, v in user_data.items()})
+    # 문자열로 저장된 disabled 값을 boolean으로 변환
+    user_dict = {k.decode(): v.decode() for k, v in user_data.items()}
+    user_dict["disabled"] = user_dict["disabled"] == "True"
+    return UserInDB(**user_dict)
 
 def authenticate_user(username: str, password: str):
     user = get_user(username)
@@ -124,7 +127,7 @@ async def register(username: str, password: str):
     user_data = {
         "username": username,
         "hashed_password": hashed_password,
-        "disabled": False
+        "disabled": "False"  # boolean을 문자열로 변환
     }
     
     redis_client.hmset(f"user:{username}", user_data)
