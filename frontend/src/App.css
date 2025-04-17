@@ -1,0 +1,143 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.App-header {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+  color: #a8a8a8;
+}
+
+.quote-button {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.quote-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+}
+
+.quote-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.quote-box {
+  margin-top: 40px;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  border-left: 5px solid #ffd700;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.quote-text {
+  font-size: 1.8rem;
+  line-height: 1.6;
+  color: #ffffff;
+  font-style: italic;
+}
+
+.error-message {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 10px;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #3a3f4b;
+  border-radius: 8px;
+}
+
+input, textarea {
+  padding: 10px;
+  border-radius: 4px;
+  border: none;
+  background-color: #4a4f5b;
+  color: white;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #4fa8c7;
+}
+
+.response {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #3a3f4b;
+  border-radius: 8px;
+  text-align: left;
+}
+
+h1, h2, h3 {
+  color: #61dafb;
+} 
