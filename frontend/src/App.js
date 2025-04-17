@@ -3,6 +3,7 @@ import './App.css';
 
 function App() {
   const [quote, setQuote] = useState('');
+  const [interpretation, setInterpretation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -95,6 +96,7 @@ function App() {
         setError(data.error);
       } else {
         setQuote(data.quote);
+        setInterpretation(data.interpretation);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -184,6 +186,10 @@ function App() {
         {quote && !error && (
           <div className="quote-box">
             <p className="quote-text">{quote}</p>
+            <div className="interpretation-box">
+              <h3>해석</h3>
+              <p className="interpretation-text">{interpretation}</p>
+            </div>
           </div>
         )}
       </header>

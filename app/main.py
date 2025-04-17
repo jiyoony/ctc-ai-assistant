@@ -71,13 +71,26 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 def get_user(username: str):
-    user_data = redis_client.hgetall(f"user:{username}")
-    if not user_data:
+    try:
+        user_data = redis_client.hgetall(f"user:{username}")
+        if not user_data:
+            return None
+        
+        # bytes 타입을 문자열로 변환하고 딕셔너리 생성
+        user_dict = {}
+        for key, value in user_data.items():
+            try:
+                user_dict[key.decode('utf-8')] = value.decode('utf-8')
+            except (UnicodeDecodeError, AttributeError):
+                user_dict[key.decode('utf-8')] = str(value)
+        
+        # disabled 값을 boolean으로 변환
+        user_dict["disabled"] = user_dict.get("disabled", "False").lower() == "true"
+        
+        return UserInDB(**user_dict)
+    except Exception as e:
+        print(f"Error in get_user: {str(e)}")
         return None
-    # 문자열로 저장된 disabled 값을 boolean으로 변환
-    user_dict = {k.decode(): v.decode() for k, v in user_data.items()}
-    user_dict["disabled"] = user_dict["disabled"] == "True"
-    return UserInDB(**user_dict)
 
 def authenticate_user(username: str, password: str):
     user = get_user(username)
@@ -130,7 +143,9 @@ async def register(username: str, password: str):
         "disabled": "False"  # boolean을 문자열로 변환
     }
     
-    redis_client.hmset(f"user:{username}", user_data)
+    # hmset 대신 hset를 사용
+    for key, value in user_data.items():
+        redis_client.hset(f"user:{username}", key, value)
     return {"message": "User registered successfully"}
 
 @app.post("/token", response_model=Token)
@@ -188,17 +203,33 @@ async def get_quote():
                 5. 독자가 '이게 뭐야' 하면서도 살짝 고개를 끄덕일 수 있는 위트를 담아주세요.
                 6. 가능한 다양한 스타일을 섞어 반복되지 않게 해주세요.
                 7. 생성한 명언에 대한 간단한 해석도 제공해 주세요. 명언의 의미가 무엇인지, 왜 그 명언이 중요한지 간단히 설명하세요.
-                 """},
+                8. 명언과 해석을 JSON 형식으로 반환해주세요.
+                예시:
+                {
+                    "quote": "인생은 마치 냉장고 속의 요구르트 같다. 언제 곰팡이가 필지 모른다.",
+                    "interpretation": "이 명언은 인생의 불확실성을 요구르트의 곰팡이로 비유한 것입니다. 하지만 실제로는 아무런 의미가 없습니다. 그냥 냉장고를 자주 확인하라는 의미일까요?"
+                }"""},
                 {"role": "user", "content": "새로운 명언을 만들어주세요."}
             ],
             temperature=0.9,
-            max_tokens=150,
+            max_tokens=200,
             top_p=0.95,
             frequency_penalty=0.5,
             presence_penalty=0.5,
             stop=None
         )
-        return {"quote": response.choices[0].message.content}
+        # Parse the JSON response from GPT
+        import json
+        content = response.choices[0].message.content
+        try:
+            data = json.loads(content)
+            return data
+        except json.JSONDecodeError:
+            # If parsing fails, return a default error response
+            return {
+                "quote": "오류가 발생했습니다. 다시 시도해주세요.",
+                "interpretation": "명언을 생성하는 중에 문제가 발생했습니다."
+            }
     except Exception as e:
         print(f"Error: {str(e)}")
         return {"error": f"명언을 생성하는 중에 오류가 발생했습니다: {str(e)}"} 
